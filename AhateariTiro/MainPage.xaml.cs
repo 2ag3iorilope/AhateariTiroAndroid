@@ -94,7 +94,7 @@
             kontagailuTimerra.Stop();
 
            
-            DisplayAlert("Partida Amaituta", $"zure puntuazioa: {puntuazioa}", "Berriro jolastu", "Itxi").ContinueWith(t =>
+            DisplayAlert("Partida Amaituta", $"Zure puntuazioa: {puntuazioa}", "Berriro jolastu", "Itxi").ContinueWith(t =>
             {
                 if (t.Result) 
                 {
