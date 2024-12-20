@@ -5,12 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Grid>
+        <!--  Lerro-definizioak: goiko atala jolaserako, beheko atala botoientzat  -->
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-
+        <!--  Atzeko planoaren irudia  -->
         <Image
             Grid.Row="0"
             Aspect="AspectFill"
@@ -18,14 +19,14 @@
             Source="fondo.png"
             VerticalOptions="FillAndExpand" />
 
-
+        <!--  Jolasa garatzeko eremu nagusia  -->
         <AbsoluteLayout
             x:Name="GameArea"
             Grid.Row="0"
             HeightRequest="{OnPlatform Default=550,
                                        Android=400}" />
 
-
+        <!--  Beheko botoi eta informazio eremua  -->
         <HorizontalStackLayout
             Grid.Row="1"
             Padding="{OnPlatform Default='30,10,30,10',
@@ -34,6 +35,8 @@
             HorizontalOptions="FillAndExpand"
             Spacing="15"
             VerticalOptions="FillAndExpand">
+
+            <!--  Hasi botoia  -->
             <Button
                 x:Name="btnHasi"
                 BackgroundColor="Green"
@@ -44,6 +47,7 @@
                 WidthRequest="{OnPlatform Default=150,
                                           Android=100}" />
 
+            <!--  Denbora erakusteko label-a  -->
             <Label
                 x:Name="lblDenabora"
                 FontSize="{OnPlatform Default=24,
@@ -53,6 +57,7 @@
                 TextColor="White"
                 VerticalOptions="Center" />
 
+            <!--  Puntuazioa erakusteko label-a  -->
             <Label
                 x:Name="lblPuntuak"
                 Margin="{OnPlatform Default='10',
@@ -64,6 +69,7 @@
                 TextColor="White"
                 VerticalOptions="Center" />
 
+            <!--  Amaitu botoia  -->
             <Button
                 x:Name="btnAmaitu"
                 BackgroundColor="Red"

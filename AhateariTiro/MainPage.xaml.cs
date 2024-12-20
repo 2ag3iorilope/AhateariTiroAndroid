@@ -2,171 +2,203 @@
 {
     public partial class MainPage : ContentPage
     {
-        private Random random = new Random(); // Patuek sortzeko erabilitako Random objektua
-        private List<Duck> aktiboPatuak = new List<Duck>(); // Jokoan aktibo dauden patuen zerrenda
-        private IDispatcherTimer jokoTimerra; // Jokoaren denbora-timerra
-        private IDispatcherTimer kontagailuTimerra; // Kontagailuaren timerra
-        private bool jokoaHasita = false; // Jokoaren hasiera kontrolatzeko aldagaia
-        private int puntuazioa = 0; // Puntua
-        private int kontagailuDenbora = 60; // Kontagailuaren iraupena segundotan
+        private Random random = new Random(); 
+        private List<Duck> aktiboPatuak = new List<Duck>(); 
+        private IDispatcherTimer jokoTimerra; 
+        private IDispatcherTimer kontagailuTimerra;
+        private bool jokoaHasita = false; 
+        private int puntuazioa = 0; 
+        private int kontagailuDenbora = 60; 
 
         public MainPage()
         {
-            InitializeComponent(); // Osagaiak hasieratu
-            InitializeGame(); // Jokoaren inicializazioa
+            InitializeComponent(); 
+            InitializeGame(); 
 
-            // "Hasi" botoiaren klik ekintza asignatzea
+            
             var hasieratuBotoia = this.FindByName<Button>("btnHasi");
             hasieratuBotoia.Clicked += (s, e) => JokoHasiera();
 
-            // "Amaitu" botoiaren klik ekintza asignatzea
+            
             var amaituBotoia = this.FindByName<Button>("btnAmaitu");
             amaituBotoia.Clicked += (s, e) => JokoaAmaitu();
         }
 
+
+        /// <summary>
+        /// Jokoaren hasierako ezarpenak konfiguratzeko metodoa.
+        /// </summary>
         private void InitializeGame()
         {
-            jokoTimerra = Application.Current.Dispatcher.CreateTimer(); // Jokoaren timerra sortu
-            jokoTimerra.Interval = TimeSpan.FromMilliseconds(50); // Timerra 50 milisegundoko iraupena
-            jokoTimerra.Tick += JokoBueltatu; // Jokoaren loop-a esleitu
-            jokoTimerra.Start(); // Timerra abiarazi
+            jokoTimerra = Application.Current.Dispatcher.CreateTimer(); 
+            jokoTimerra.Interval = TimeSpan.FromMilliseconds(50); 
+            jokoTimerra.Tick += JokoBueltatu; 
+            jokoTimerra.Start();
 
-            kontagailuTimerra = Application.Current.Dispatcher.CreateTimer(); // Kontagailuaren timerra sortu
-            kontagailuTimerra.Interval = TimeSpan.FromSeconds(1); // Timerra 1 segundoko iraupena
-            kontagailuTimerra.Tick += Kontagailua; // Kontagailuaren tick-a esleitu
+            kontagailuTimerra = Application.Current.Dispatcher.CreateTimer();
+            kontagailuTimerra.Interval = TimeSpan.FromSeconds(1); 
+            kontagailuTimerra.Tick += Kontagailua; 
         }
 
+        /// <summary>
+        /// Jokoa hasteko metodoa.
+        /// </summary>
         private void JokoHasiera()
         {
-            if (!jokoaHasita) // Jokoak ez badu hasi
+            if (!jokoaHasita) 
             {
-                jokoaHasita = true; // Jokoaren hasiera aldatu
-                puntuazioa = 0; // Puntua berresetu
-                kontagailuDenbora = 60; // Kontagailua berresetu
-                lblDenabora.Text = kontagailuDenbora.ToString(); // Hasierako denbora erakutsi
-                lblPuntuak.Text = "Puntuak: 0"; // Hasierako puntuazioa erakutsi
-                AhateaSortu(); // Patuen sorrera hasi
-                kontagailuTimerra.Start(); // Kontagailua hasi
+                jokoaHasita = true; 
+                puntuazioa = 0; 
+                kontagailuDenbora = 60; 
+                lblDenabora.Text = kontagailuDenbora.ToString();
+                lblPuntuak.Text = "Puntuak: 0";
+                AhateaSortu(); 
+                kontagailuTimerra.Start(); 
             }
         }
 
+        /// <summary>
+        /// Ahate berriak ausaz sortzen dituen metodoa.
+        /// </summary>
         private async void AhateaSortu()
         {
-            while (jokoaHasita) // Jokoa hasi bada
+            while (jokoaHasita) 
             {
-                await Task.Delay(random.Next(2000, 5000)); // Patua sortzeko atzerapena
-                PatuaSortu(); // Patua sortu
+                await Task.Delay(random.Next(2000, 5000)); 
+                PatuaSortu(); 
             }
         }
+
+        /// <summary>
+        /// Denbora kontagailua kudeatzen duen metodoa.
+        /// </summary>
 
         private void Kontagailua(object sender, EventArgs e)
         {
-            kontagailuDenbora--; // Kontagailua murriztu
-            lblDenabora.Text = kontagailuDenbora.ToString(); // Denbora eguneratu interfazearen gainean
+            kontagailuDenbora--; 
+            lblDenabora.Text = kontagailuDenbora.ToString(); 
 
-            if (kontagailuDenbora <= 0) // Denbora amaitu bada
+            if (kontagailuDenbora <= 0)
             {
-                JokoaAmaitu(); // Jokoa amaitu
+                JokoaAmaitu();
             }
         }
 
         [Obsolete]
+        /// <summary>
+        /// Jokoa amaitzen duen metodoa.
+        /// </summary>
         private void JokoaAmaitu()
         {
-            jokoaHasita = false; // Jokoa amaitu
-            kontagailuTimerra.Stop(); // Kontagailua gelditu
+            jokoaHasita = false; 
+            kontagailuTimerra.Stop();
 
-            // Puntuazioa erakutsi alerta batean
+           
             DisplayAlert("Partida Amaituta", $"zure puntuazioa: {puntuazioa}", "Berriro jolastu", "Itxi").ContinueWith(t =>
             {
-                if (t.Result) // "Jugar de Nuevo" hautatu bada
+                if (t.Result) 
                 {
-                    JokoaBerresetu(); // Jokoa berresetu
+                    JokoaBerresetu(); 
                 }
                 else
                 {
-                    // Aplikazioa itxi
+                
                     Device.BeginInvokeOnMainThread(() =>
                     {
-                        Application.Current.Quit(); // Aplikazioa ixteko
+                        Application.Current.Quit(); 
                     });
                 }
             });
         }
+        /// <summary>
+        /// Jokoa hasierako egoerara berrezartzen duen metodoa.
+        /// </summary>
 
         private void JokoaBerresetu()
         {
-            aktiboPatuak.Clear(); // Aktibo dauden patuak garbitu
-            GameArea.Children.Clear(); // Jokoaren eremua garbitu
-            lblDenabora.Text = "60"; // Denbora etiketan berresetu
-            lblPuntuak.Text = "Puntuak: 0"; // Puntuazioa berresetu
-            puntuazioa = 0; // Puntua berresetu
+            aktiboPatuak.Clear(); 
+            GameArea.Children.Clear(); 
+            lblDenabora.Text = "60"; 
+            lblPuntuak.Text = "Puntuak: 0";
+            puntuazioa = 0; 
         }
+        /// <summary>
+        /// Ahate berri bat sortzen duen metodoa.
+        /// </summary>
 
         private void PatuaSortu()
         {
-            var patua = new Duck // Patua sortu
+            var patua = new Duck
             {
-                IsSpeedyDuck = random.Next(2) == 0, // Patua azkarrak edo normala den zehaztu
-                Position = new Point(-50, random.Next(50, (int)GameArea.Height - 50)) // Patua hasierako posizioan
+                IsSpeedyDuck = random.Next(2) == 0, 
+                Position = new Point(-50, random.Next(50, (int)GameArea.Height - 50)) 
             };
 
             var patuIrudia = new Image
             {
-                Source = patua.IsSpeedyDuck ? "patorapido.png" : "pato.png", // Irudia aukeratu
+                Source = patua.IsSpeedyDuck ? "patorapido.png" : "pato.png", 
                 WidthRequest = 100,
                 HeightRequest = 100
             };
 
-            var tapGestureRecognizer = new TapGestureRecognizer(); // Tap gestua
+            var tapGestureRecognizer = new TapGestureRecognizer(); 
             tapGestureRecognizer.Tapped += (s, e) =>
             {
-                PatuEzabatu(patua); // Patua ezabatu
-                puntuazioa++; // Puntua handitu
-                lblPuntuak.Text = $"Puntuak: {puntuazioa}"; // Interfazearen puntuazioa eguneratu
+                PatuEzabatu(patua); 
+                puntuazioa++; 
+                lblPuntuak.Text = $"Puntuak: {puntuazioa}"; 
             };
-            patuIrudia.GestureRecognizers.Add(tapGestureRecognizer); // Gestua irudira gehitu
+            patuIrudia.GestureRecognizers.Add(tapGestureRecognizer);
 
-            patua.Visual = patuIrudia; // Irudia patuari esleitu
-            aktiboPatuak.Add(patua); // Patua aktiboen zerrendan gehitu
-            GameArea.Children.Add(patuIrudia); // Irudia jokoaren eremuan gehitu
+            patua.Visual = patuIrudia; 
+            aktiboPatuak.Add(patua); 
+            GameArea.Children.Add(patuIrudia); 
 
             AbsoluteLayout.SetLayoutBounds(patuIrudia,
-                new Rect(patua.Position.X, patua.Position.Y, 50, 50)); // Patuaren posizioa ezarri
+                new Rect(patua.Position.X, patua.Position.Y, 50, 50)); 
         }
+        /// <summary>
+        /// Jokoaren buelta bakoitzean animazioak kudeatzen dituen metodoa.
+        /// </summary>
 
         private void JokoBueltatu(object sender, EventArgs e)
         {
-            for (int i = aktiboPatuak.Count - 1; i >= 0; i--) // Aktibo dauden patuak erakutsi
+            for (int i = aktiboPatuak.Count - 1; i >= 0; i--) 
             {
-                var patua = aktiboPatuak[i]; // Patu aktiboa hartu
+                var patua = aktiboPatuak[i]; 
                 patua.Position = new Point(
-                    patua.Position.X + (patua.IsSpeedyDuck ? 8 : 4), // Patuaren posizioa eguneratu
+                    patua.Position.X + (patua.IsSpeedyDuck ? 8 : 4), 
                     patua.Position.Y);
 
                 AbsoluteLayout.SetLayoutBounds(patua.Visual,
-                    new Rect(patua.Position.X, patua.Position.Y, 50, 50)); // Irudiaren posizioa ezarri
+                    new Rect(patua.Position.X, patua.Position.Y, 50, 50)); 
 
-                // Irudiak pantailatik ateratzen direnean ezabatu
+                
                 if (patua.Position.X > GameArea.Width)
                 {
-                    GameArea.Children.Remove(patua.Visual); // Irudia ezabatu
-                    aktiboPatuak.RemoveAt(i); // Patua zerrendetik ezabatu
+                    GameArea.Children.Remove(patua.Visual); 
+                    aktiboPatuak.RemoveAt(i); 
                 }
             }
         }
+        /// <summary>
+        /// Ahate bat pantailatik kentzeko metodoa.
+        /// </summary>
 
         private void PatuEzabatu(Duck patua)
         {
-            GameArea.Children.Remove(patua.Visual); // Irudia ezabatu
-            aktiboPatuak.Remove(patua); // Patu aktiboa ezabatu
+            GameArea.Children.Remove(patua.Visual); 
+            aktiboPatuak.Remove(patua); 
         }
     }
+    /// <summary>
+    /// Ahatearen klasea, propietateak eta jokabidea definitzen dituena.
+    /// </summary>
 
     public class Duck
     {
-        public bool IsSpeedyDuck { get; set; } // Patu azkarra den ala ez
-        public Point Position { get; set; } // Patuaren posizioa
-        public Image Visual { get; set; } // Patuaren irudia
+        public bool IsSpeedyDuck { get; set; } 
+        public Point Position { get; set; } 
+        public Image Visual { get; set; } 
     }
 }
